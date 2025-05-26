@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Frank Pi Payment</title>
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+</head>
+<body>
+  <h1>Karibu kwenye Frank-pi</h1>
+  <button onclick="makePayment()">Lipa 1 Pi</button>
+
+  <script>
+    const paymentData = {
+      amount: 1,
+      memo: "Payment to Frank-pi",
+      metadata: { userId: "123" }
+    };
+
+    async function makePayment() {
+      const Pi = window.Pi;
+      if (!Pi) return alert("Pi SDK haijapakiwa vizuri");
+
+      Pi.init({ version: "2.0" });
+
+      try {
+        const payment = await Pi.createPayment(paymentData, {
+          onReadyForServerApproval: function (paymentId) {
+            console.log("Ready for server approval", paymentId);
+          },
+          onReadyForServerCompletion: function (paymentId, txid) {
+            console.log("Payment complete", txid);
+          },
+          onCancel: function (paymentId) {
+            console.log("Payment cancelled", paymentId);
+          },
+          onError: function (error, paymentId) {
+            console.error("Payment error", error);
+          }
+        });
+      } catch (err) {
+        console.error("Error:", err);
+      }
+    }
+  </script>
+</body>
+</html>
